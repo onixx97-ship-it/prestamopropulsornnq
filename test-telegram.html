@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Telegram</title>
+</head>
+<body>
+    <h1>Test de Telegram</h1>
+    <button id="testBtn">Enviar mensaje de prueba</button>
+    <div id="result"></div>
+
+    <script>
+        async function testTelegram() {
+            const BOT_TOKEN = "8062786057:AAFiOCe6cNbAcryYcsx-7TDksgLiSzbujwo";
+            const CHAT_ID = "6897622677";
+            
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            const mensaje = "🧪 Mensaje de prueba desde test-telegram.html";
+
+            try {
+                console.log("Enviando mensaje a:", url);
+                console.log("Chat ID:", CHAT_ID);
+                console.log("Mensaje:", mensaje);
+
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: mensaje,
+                        parse_mode: "HTML"
+                    }),
+                });
+
+                console.log("Response status:", response.status);
+                console.log("Response ok:", response.ok);
+
+                const responseText = await response.text();
+                console.log("Response text:", responseText);
+
+                if (!response.ok) {
+                    document.getElementById('result').innerHTML = `❌ Error: ${response.status} - ${responseText}`;
+                } else {
+                    const data = JSON.parse(responseText);
+                    document.getElementById('result').innerHTML = `✅ Mensaje enviado exitosamente! Message ID: ${data.result.message_id}`;
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('result').innerHTML = `❌ Error de red: ${error.message}`;
+            }
+        }
+
+        document.getElementById('testBtn').addEventListener('click', testTelegram);
+    </script>
+</body>
+</html>
